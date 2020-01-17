@@ -7,11 +7,6 @@ function viewSection(identifier){
     window.location.hash='#'+identifier;
 }
 
-function showHide(show, hide) {
-    $(show).each(function(){$(this).prop('disabled', false).css('opacity', 1.0)});
-    $(hide).each(function(){$(this).prop('disabled', true).css('opacity', 0.5)});
-}
-
 function removeSection(identifier){
     $('#'+identifier).hide();
 }
@@ -435,6 +430,7 @@ function buildOperationObject() {
         "autonomous":document.getElementById("queueAuto").value,
         "phases_enabled":document.getElementById("queuePhasesEnabled").value,
         "obfuscator":document.getElementById("queueObfuscated").value,
+        "auto_close": document.getElementById("queueAutoClose").value,
         "jitter":jitter,
         "max_time": document.getElementById("queueMaxTime").value || 1800,
         "source":document.getElementById("queueSource").value,
@@ -489,8 +485,9 @@ function clearTimeline() {
 
 let OPERATION = {};
 function operationCallback(data){
+    function spacing() { return "&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;" }
     OPERATION = data[0];
-    $("#op-control-state").html(OPERATION.state);
+    $("#op-control-state").html(OPERATION.state + spacing() + findOpDuration(OPERATION) + spacing() + OPERATION.chain.length + ' decisions');
     if (OPERATION.autonomous) {
         $("#togBtnHil").prop("checked", true);
     } else {
@@ -545,6 +542,20 @@ function operationCallback(data){
         if(!atomic_interval) {
             atomic_interval = setInterval(refresh, 5000);
         }
+    }
+}
+
+function findOpDuration(operation){
+    function convertSeconds(operationInSeconds){
+        let operationInMinutes = Math.floor(operationInSeconds / 60) % 60;
+        operationInSeconds -= operationInMinutes * 60;
+        let secondsRemainder = operationInSeconds % 60;
+        return operationInMinutes + ' min ' + Math.round(secondsRemainder) + ' sec';
+    }
+    if(operation.finish) {
+        return convertSeconds(Math.abs(new Date(operation.finish) - new Date(operation.start)) / 1000);
+    } else {
+        return convertSeconds(Math.abs(new Date() - new Date(operation.start)) / 1000);
     }
 }
 
@@ -720,8 +731,12 @@ function downloadOperationReport() {
 }
 
 function changeProgress(percent) {
-    if(percent > 100)
+    if(percent >= 100) {
         percent = 100;
+        if(!OPERATION.finish) {
+            percent = 99;
+        }
+    }
     let elem = document.getElementById("myBar");
     elem.style.width = percent + "%";
     elem.innerHTML = percent + "%";
@@ -1236,17 +1251,6 @@ function openDuk7(){
         'local.host.name and a value of domaincontroller.acme. If during the course of an operation an ability '+
         'parsers out a fact that matches the stopping condition, the planner will stop generating links and exit '+
         'the operation. ');
-}
-
-function openDukHelp(){
-    document.getElementById("duk-modal").style.display="block";
-    $('#duk-text').html('<h4>Welcome. Here are a few instructions to get you started:</h4>' +
-        '<ol>' +
-        '<li>Start by deploying an agent on any compromised host. Sandcat (54ndc47) is our default agent.</li>' +
-        '<li>Review the pre-built adversaries and consider building your own</li>' +
-        '<li>Start a new operation, either with an adversary or without. If the latter, select potential links while it is running</li>' +
-        '<li>Review the full documentation via the <i>Docs</i> tab to learn more about any of the many options you see.</li>' +
-        '</ol>');
 }
 
 /** HUMAN-IN-LOOP */

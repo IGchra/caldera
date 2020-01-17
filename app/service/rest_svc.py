@@ -27,6 +27,7 @@ class RestService(BaseService):
     async def persist_adversary(self, data):
         """
         Save a new adversary from either the GUI or REST API. This writes a new YML file into the core data/ directory.
+
         :param data:
         :return: the ID of the created adversary
         """
@@ -51,6 +52,7 @@ class RestService(BaseService):
         """
         Update a new planner from either the GUI or REST API with new stopping conditions.
         This overwrites the existing YML file.
+
         :param data:
         :return: the ID of the created adversary
         """
@@ -160,11 +162,11 @@ class RestService(BaseService):
         return set(p.name for p_dir in payload_dirs for p in p_dir.glob('*')
                    if p.is_file() and not p.name.startswith('.'))
 
-    async def get_potential_links(self, op_id, paw):
+    async def get_potential_links(self, op_id, paw=None):
         operation = (await self.get_service('data_svc').locate('operations', match=dict(id=op_id)))[0]
         if operation.finish:
             return []
-        agents = await self.get_service('data_svc').locate('agents', match=dict(paw=paw))
+        agents = await self.get_service('data_svc').locate('agents', match=dict(paw=paw)) if paw else operation.agents
         potential_abilities = await self._build_potential_abilities(operation)
         return await self._build_potential_links(operation, agents, potential_abilities)
 
@@ -198,7 +200,7 @@ class RestService(BaseService):
                          jitter=data.pop('jitter'), source=next(iter(sources), None), state=data.pop('state'),
                          allow_untrusted=int(data.pop('allow_untrusted')), autonomous=int(data.pop('autonomous')),
                          phases_enabled=bool(int(data.pop('phases_enabled'))), obfuscator=data.pop('obfuscator'),
-                         max_time=int(data.pop('max_time')))
+                         max_time=int(data.pop('max_time')), auto_close=bool(int(data.pop('auto_close'))))
 
     async def _poll_for_data(self, collection, search):
         coll, checks = 0, 0
@@ -248,7 +250,7 @@ class RestService(BaseService):
         adv = await self.get_service('data_svc').locate('adversaries', match=dict(adversary_id=adversary_id))
         if adv:
             return copy.deepcopy(adv[0])
-        return Adversary(adversary_id=0, name='ad-hoc', description='an empty adversary profile', phases={'1': []})
+        return Adversary(adversary_id=0, name='ad-hoc', description='an empty adversary profile', phases={1: []})
 
     async def _construct_agents_for_group(self, group):
         if group:

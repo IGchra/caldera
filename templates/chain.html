@@ -1,4 +1,3 @@
-<script src="/gui/js/shared.js"></script>
 <html>
 <head>
   <title>Home | Dashboard</title>
@@ -25,7 +24,7 @@
     </div>
   </div>
   <a href="/logout" style="float:right">Logout</a>
-  <a href="https://github.com/mitre/caldera/wiki" style="float:right" target="_blank">Docs</a>
+  <a href="/docs/index.html" style="float:right" target="_blank">Docs</a>
   <div class="subnav-right">
     <button class="subnavbtn">Advanced <i class="fa fa-caret-down"></i></button>
     <div class="subnav-content subnav-content-right">
@@ -56,17 +55,17 @@
     <div id="atomic-blocks" class="row-canvas">
       <center>
 
-        <div id="intro" class="home-box">
-            <div class="topleft duk-icon"><img onclick="removeSection('intro')" src="/gui/img/x.png"></div>
-            <div class="topright duk-icon"><img onclick="openDukHelp()" src="/gui/img/duk.png"></div>
+        <div id="intro" class="home-box watermark">
             <h1 id="big-head" class="big-head">CALDERA</h1>
-            <hr>
+            <hr style="width:70%">
             <h3 id="sub-head" class="small-head" style="margin-bottom: 20px;margin-top:0;">Cyber Adversary Language and Decision Engine for Red Team Automation</h3>
-            <span>{{ exploits|length }} abilities&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
+            <div style="opacity:0.5">
+                <span>{{ exploits|length }} abilities&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
                 <span>{{ tactics|length }} tactics&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
                 <span>{{ payloads|length }} payloads&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
                 <span>{{ adversaries|length }} adversaries&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
                 <span>{{ agents|length }} agents</span>
+            </div>
         </div>
 
         <!-- agents -->
@@ -348,7 +347,7 @@
                 <table>
                     <tr>
                         <td><input id="agent-output" type="checkbox"></td>
-                        <td><p>&nbsp;&nbsp;include agent output</p></td>
+                        <td><label for="agent-output"><p>&nbsp;&nbsp;include agent output</p></label></td>
                     </tr>
                 </table>
                 </center>
@@ -399,6 +398,10 @@
                       <select name="phases" id="queuePhasesEnabled" class="queueOption" style="opacity:0.5" disabled="true">
                         <option value="1" selected>Enable Phases</option>
                         <option value="0">Disable Phases</option>
+                      </select>
+                      <select name="phases" id="queueAutoClose" class="queueOption" style="opacity:0.5" disabled="true">
+                        <option value="1" selected>Auto close operation</option>
+                        <option value="0">Keep open for max time</option>
                       </select>
                       <select name="phases" id="queueObfuscated" class="queueOption" style="opacity:0.5" disabled="true">
                           {% for o in obfuscators %}
@@ -843,6 +846,7 @@
 <script src="/gui/jquery/jquery.dataTables.min.js"></script>
 <script src="/gui/jquery/jquery.dataTables.select.min.js"></script>
 <script src="/gui/js/sections.js"></script>
+<script src="/gui/js/shared.js"></script>
 
 <!-- Scripts and CSS file to support ColVis in DataTables -->
 <script src="/gui/js/buttons.colVis.min.js"></script>

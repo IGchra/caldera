@@ -8,6 +8,9 @@ plugins:
   - sandcat
   - stockpile
   - compass
+  - abilities
+  - importer
+  - reporter  
 debug: True
 api_key: ADMIN123
 users:

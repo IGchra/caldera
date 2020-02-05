@@ -1,0 +1,127 @@
+<html>
+
+<head>
+    <title>Reporter | View</title>
+    <link rel="shortcut icon" type="image/png" href="/gui/img/favicon.png" />
+    <link rel="stylesheet" href="/gui/css/shared.css">
+    <link rel="stylesheet" href="/gui/css/navbar.css">
+    <link rel="stylesheet" href="/gui/css/basic.css">
+    <link rel="stylesheet" href="/gui/css/modal.css">
+</head>
+
+<body>
+    <div class="navbar plugin"></div>
+    <div style="margin-bottom: 100px">
+        <div id="duk-modal-compass" class="modal">
+            <form class="modal-content">
+                <div class="container">
+                    <div class="row duk-modal">
+                        <span onclick="document.getElementById('duk-modal-compass').style.display='none'" class="close"
+                            title="Close Modal">&times;</span>
+                        <div class="column" style="flex:8%">
+                            <img src="/gui/img/duk.png" />
+                        </div>
+                        <div class="column" style="flex:92%">
+                            <p id="duk-text" style="color: white"></p>
+                            <div style="background-color: var(--primary-background);padding: 15px;border-radius: 25px">
+                                <h4>Check detection tools</h4>
+                                <ul style="text-align: left">
+                                    <li>Select an operation for which you want to check detection.</li>
+                                    <li>Select the detection tools that were active during the execution of the operation.</li>
+                                    <li>Select if you want to download the JSON reports.</li>
+                                    <li>Click "Check detection tools" to invoke the creation of a report correlating detection and execution.</li>
+                                    <li>Report will automatically be stored within the plugin and can then be used to produce a summarized CSV report.</li>
+                                    <li>Note that the detection tools have to be up and running both during the execution of the operation and the creation of this JSON report</li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div style="background-color: var(--primary-background);padding: 15px;border-radius: 25px">
+                                <h4>Export Report (CSV)</h4>
+                                <ul style="text-align: left">
+                                    <li>After creation of the JSON report, use the export to get a summary of all detections.</li>
+                                    <li>Select the report you would like to have summarized, it will automatically be downloaded.</li>
+                                    <li>The used delimiter is '§' and the token for linebreaks within cells is '€'.</li>
+                                    <li>Note that for this step the detection tools do not have to be online.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="stockpile" class="row-canvas">
+            <div class="section-profile">
+                <div class="row">
+                    <div class="topright duk-icon"><img onclick="openHelp()" src="/gui/img/duk.png"></div>
+                    <div class="column section-border" style="flex:37%;text-align:left;padding:15px;">
+                        <h1 style="font-size:70px;margin-top:-20px;">Reporter</h1>
+                        <h2 style="margin-top:-50px">check for detection</h2>
+                        <p>Check detection tools for alerts that occured during operations and create reports.</p>
+                    </div>
+                    <div class="column section-border" style="flex:37%;text-align:left;padding:15px;">
+                        <h2>Check detection tools</h2>
+                        <div id="layerdetectioncheck">
+                            <select id="layer-selection-operation" style="margin:0 0 0 0">
+                                <option value="" selected>Select an Operation (All)</option>
+                                {% for op in operations %}
+                                <option value="{{ op.id }}">{{ op.name }} - {{ op.finish }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div style="margin-left: 15px; margin-top: 15px;">
+                            <table style="width: 75%;">
+                                <tbody>
+                                    <tr>
+                                        <td><input id="tanium-check" type="checkbox" style="width: 15px; height: 15px;"></td>
+                                        <td style="width: 30%"><label for="tanium-check">
+                                                <p>&nbsp;&nbsp;Check Tanium</p>
+                                            </label></td>
+                                        <td><input id="cortex-check" type="checkbox" style="width: 15px; height: 15px;"></td>
+                                        <td style="width: 30%"><label for="cortex-check">
+                                                <p>&nbsp;&nbsp;Check Cortex XDR</p>
+                                            </label></td>
+                                        <td><input id="qradar-check" type="checkbox" style="width: 15px; height: 15px;"></td>
+                                        <td style="width: 30%"><label for="qradar-check">
+                                                <p>&nbsp;&nbsp;Check QRadar</p>
+                                            </label></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table style="margin-top: 10px;">
+                                <tbody>
+                                    <tr>
+                                        <td><input id="download-output" type="checkbox" style="width: 15px; height: 15px;"></td>
+                                        <td><label for="download-output">
+                                                <p>&nbsp;&nbsp;Download Reports</p>
+                                            </label></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="generateLayer" type="button" class="button-success"
+                            onclick="generateCorrelationReport()">Check detection</button>
+                    </div>
+                    <div class="column" style="flex:37%;text-align:left;padding:15px;">
+                        <h2>Export report (CSV)</h2>
+                        <div id="exportcsvreport">
+                            <select id="layer-selection-report" style="margin:0 0 0 0">
+                                <option value="" selected>Select a Detection-Report (All)</option>
+                                {% for rep in reports %}
+                                <option value="{{ rep.id }}">{{ rep.name }} - {{ rep.start }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button id="exportcsv" type="button" class="button-success" style=""
+                            onclick="exportCSV()">Export CSV-report</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </center>
+</body>
+<script src="/gui/jquery/jquery.js"></script>
+<script src="/gui/js/shared.js"></script>
+<script src="/reporter/js/reporter.js"></script>
+
+</html>

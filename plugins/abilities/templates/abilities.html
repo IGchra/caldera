@@ -1,0 +1,189 @@
+<html>
+
+<head>
+  <title>Abilities | View</title>
+  <link rel="shortcut icon" type="image/png" href="/gui/img/favicon.png" />
+  <link rel="stylesheet" href="/gui/css/shared.css">
+  <link rel="stylesheet" href="/gui/css/navbar.css">
+  <link rel="stylesheet" href="/gui/css/basic.css">
+  <link rel="stylesheet" href="/gui/css/modal.css">
+</head>
+
+<body>
+
+  <div class="navbar plugin"></div>
+  <center style="margin-bottom: 20px">
+    <div id="duk-modal-compass" class="modal">
+      <form class="modal-content">
+          <div class="container">
+              <div class="row duk-modal">
+                  <span onclick="document.getElementById('duk-modal-compass').style.display='none'" class="close"
+                        title="Close Modal">&times;</span>
+                  <div class="column" style="flex:8%">
+                      <img src="/gui/img/duk.png"/>
+                  </div>
+                  <div class="column" style="flex:92%">
+                      <p id="duk-text" style="color: white"></p>
+                          <div style="background-color: var(--primary-background);padding: 15px;border-radius: 25px">
+                          <h4>Search in Abilities</h4>
+                          <ul style="text-align: left">
+                              <li>Omitted.</li>
+                          </ul>
+                      </div>
+                      <br>
+                      <div style="background-color: var(--primary-background);padding: 15px;border-radius: 25px">
+                          <h4>Export to CSV</h4>
+                          <ul style="text-align: left">
+                              <li>Download all current abilities as CSV.</li>
+                              <li>The used delimiter is '§' and the token for linebreaks within cells is '€'.</li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          </div>
+       </form>
+    </div>
+    <div id="stockpile" class="row-canvas">
+      <div class="section-profile">
+        <div class="row">
+          <div class="topright duk-icon"><img onclick="openHelp()" src="/gui/img/duk.png"></div>
+          <div class="column section-border" style="flex:37%;text-align:left;padding:15px;">
+            <h1 style="font-size:70px;margin-top:-20px;">Abilities</h1>
+            <p>Display all current abilities</p>
+          </div>
+          <div class="column section-border" style="flex:37%;text-align:left;padding:15px;">
+            <h2>Search in Abilities</h2>
+            <div id="layerSelectionAdversary">
+              {% if term == 'Search' %}
+                <input type="text" id="search_term" placeholder="Search" style="margin: 0 0 0 0; text-align:left; width:75%;">
+              {% else %}
+                <input type="text" id="search_term" value="{{ term }}" style="margin: 0 0 0 0; text-align:left; width:75%;">
+              {% endif %}
+              <select id="search_category" style="margin: 15px 0 0 5%; text-align:left; width:65%;">
+                {% if category == 'Select a category' %}
+                  <option value="default" selected>Select a Category</option>
+                {% else %}
+                  <option value="default">Select a Category</option>
+                {% endif %}
+                {% for cat in categories %}
+                {% if category == cat %}
+                  <option value="{{ cat }}" selected>{{ cat }}</option>
+                {% else %}
+                  <option value="{{ cat }}">{{ cat }}</option>
+                {% endif %}
+                {% endfor %}
+              </select></div>
+            <button id="generateAbilities" type="button" class="button-success" onclick="searchTerm()">
+              Search
+            </button>
+          </div>
+
+          <div class="column" style="flex:37%;text-align:left;padding:15px;">
+            <h2>Export to CSV</h2>
+            <button id="generateAbilities" type="button" class="button-success" onclick="generateAbilities()">Export
+              all
+              to CSV</button> <input id='CSVInput' type='file' hidden />
+          </div>
+        </div>
+      </div>
+    </div>
+  </center>
+
+  <style>
+    #outer-div {
+      width: 100%;
+      text-align: center;
+    }
+
+    #inner-div {
+      display: inline-block;
+      margin: 0 auto;
+      padding: 3px;
+      width: 90vw;
+    }
+  </style>
+  }
+  <div id="outer-div" width="100%">
+    <div id="inner-div">
+      <style type="text/css">
+        .tg {
+          border-collapse: collapse;
+          border-spacing: 0;
+        }
+
+        .tg td {
+          font-family: Arial, sans-serif;
+          font-size: 14px;
+          padding: 10px 5px;
+          border-style: solid;
+          border-width: 1px;
+          overflow: hidden;
+          word-break: break-word;
+          border-color: black;
+        }
+
+        .tg th {
+          font-family: Arial, sans-serif;
+          font-size: 14px;
+          font-weight: normal;
+          padding: 10px 5px;
+          border-style: solid;
+          border-width: 1px;
+          overflow: hidden;
+          word-break: normal;
+          border-color: black;
+        }
+
+        .tg .tg-9thv {
+          font-size: 12px;
+          font-family: Arial, Helvetica, sans-serif !important;
+          ;
+          color: white;
+          border-color: #c0c0c0;
+          text-align: left;
+          vertical-align: top
+        }
+
+        .tg .tg-97hc {
+          font-weight: bold;
+          font-size: 12px;
+          font-family: Arial, Helvetica, sans-serif !important;
+          ;
+          background-color: #9b9b9b;
+          color: white;
+          border-color: #c0c0c0;
+          text-align: left;
+          vertical-align: top
+        }
+      </style>
+      <table class="tg" width="100%">
+        <!-- style="color:white; table-layout:fixed; border-collapse:collapse" border="1" frame="border" bordercolor="white">-->
+        <tr>
+          {% for k in categories %}
+          <th class="tg-97hc" style="word-wrap:break-word">{{ k }}</th>
+          {% endfor %}
+        </tr>
+        {% if abilities|length == 0 %}
+      </table>
+      <p>No tests matching your search have been found</p>
+        {% else %}
+        {% for a in abilities %}
+        <tr>
+          {% for k in a.keys() %}
+          <td class="tg-9thv" style="word-wrap:break-word">{{ a[k] }}</td>
+          {% endfor %}
+        </tr>
+        <!--<pre style="color:white">{{ a.name }}</pre>-->
+        {% endfor %}
+      </table>
+      {% endif %}
+    </div>
+  </div>
+
+
+</body>
+<script src="/gui/jquery/jquery.js"></script>
+<script src="/gui/js/shared.js"></script>
+<script src="/abilities/js/abilities.js"></script>
+
+</html>

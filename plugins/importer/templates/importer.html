@@ -1,0 +1,92 @@
+ <html>
+     <head>
+         <title>Importer | View</title>
+         <link rel="shortcut icon" type="image/png" href="/gui/img/favicon.png"/>
+         <link rel="stylesheet" href="/gui/css/shared.css">
+         <link rel="stylesheet" href="/gui/css/navbar.css">
+         <link rel="stylesheet" href="/gui/css/basic.css">
+         <link rel="stylesheet" href="/gui/css/modal.css">
+     </head>
+     <body>
+     <div class="navbar plugin"></div>
+     <center style="margin-bottom: 100px">
+        <div id="duk-modal-compass" class="modal">
+            <form class="modal-content">
+                <div class="container">
+                    <div class="row duk-modal">
+                        <span onclick="document.getElementById('duk-modal-compass').style.display='none'" class="close"
+                              title="Close Modal">&times;</span>
+                        <div class="column" style="flex:8%">
+                            <img src="/gui/img/duk.png"/>
+                        </div>
+                        <div class="column" style="flex:92%">
+                            <p id="duk-text" style="color: white"></p>
+                                <div style="background-color: var(--primary-background);padding: 15px;border-radius: 25px">
+                                <h4>Generate All Adversaryies</h4>
+                                <ul style="text-align: left">
+                                    <li>Click 'Generate All Adversaries' to create an adversary for each OS/tactic combination and one for each OS for all tests with the tag (Stable). If such an adversary already exists it gets updated, meaning new abilites (if any) are included and deleted abilities (if any) are removed.</li>
+                                    <li>Select a category, enter a term and Click 'Generate Specific Adversary' to create an adversary including all abilities that match the query.</li>
+                                </ul>
+                            </div>
+                            <br>
+                            <div style="background-color: var(--primary-background);padding: 15px;border-radius: 25px">
+                                <h4>Bulk Import (CSV)</h4>
+                                <ul style="text-align: left">
+                                    <li>Upload a CSV with abilities in order to add them to the database.</li>
+                                    <li>Ensure the CSV has a header indicating the position of the properties in the list.</li>
+                                    <li>Ensure that all expected columns are part of the header.</li>
+                                    <li>Providing a columnd with ability_id is optional. If indicated in the header, all tests for which this column is not empty receive the id indicated. If already a test with this ID is present, it gets updated. If no ID is provided, the tool will automatically create one</li>
+                                    <li>Further columns can be part of the file and will be ignored</li>
+                                    <li>The expected delimiter is '§' and the expected token for linebreaks within cells is '€'</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </form>
+          </div>
+         <div id="stockpile" class="row-canvas">
+            <div class="section-profile">
+                    <div class="row">
+			    <div class="topright duk-icon"><img onclick="openHelp()" src="/gui/img/duk.png"></div>
+                        <div class="column section-border" style="flex:37%;text-align:left;padding:15px;">
+                            <h1 style="font-size:70px;margin-top:-20px;">Importer</h1>
+			    <!--<h2 style="margin-top:-50px"></h2>-->
+                            <p>Bulk import of new abilities (procedure) and (re-)generate adversaries</p>
+                        </div>
+                        <div class="column section-border" style="flex:37%;text-align:left;padding:15px;">
+                            <h2>Generate All Adversaries</h2>
+                            <button id="generateLayer" type="button" class="button-success"
+                                    style="" onclick="generateAdv()">Generate All Adversaries</button>
+                                    <h2>Create Specific Adversary</h2>
+                                    <div id="layerSelectionAdversary">
+                                      <input type="text" id="search_term" placeholder="Value" style="margin: 0 0 0 0; text-align:left; width:75%;">
+                                      <select id="search_category" style="margin: 15px 0 0 5%; text-align:left; width:65%;">
+                                        <option value="default" selected>Select a Category</option>
+                                        {% for cat in categories %}
+                                          <option value="{{ cat }}">{{ cat }}</option>
+                                        {% endfor %}
+                                      </select></div>
+                                    <button id="generatespecificadv_button" type="button" class="button-success" onclick="generateSpecificAdv()">
+                                      Create Specific Adversary
+                                    </button>
+                        </div>
+                        <div class="column" style="flex:37%;text-align:left;padding:15px;">
+                            <h2>Bulk Import (CSV)</h2>
+                            <button id="generateAdversary" type="button" class="button-success"
+				 onclick="uploadCSVButtonFileUpload()">Upload
+                            	CSV
+                                </button>
+                            <input id='CSVInput' type='file' hidden/>
+			    <p>Expected Columns: name,description,executor,test,technique_id,technique_name,tactic,payload,cleanup,platform</p>
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+     </center>
+     </body>
+    <script src="/gui/jquery/jquery.js"></script>
+    <script src="/gui/js/shared.js"></script>
+    <script src="/importer/js/importer.js"></script>
+ </html>
